@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S0LACE2</title>
+  <link rel="stylesheet" href="/assets/css/s0lace2.css" />
+  <style>
+    .page-shell { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 2rem; padding-bottom: 6rem; position: relative; z-index: 1; }
+    .wordmark {
+      font-family: var(--font-mono); font-weight: 600; font-size: clamp(2.6rem, 8vw, 4.6rem);
+      letter-spacing: 0.01em; line-height: 1; margin-bottom: 0.3em; animation: fade-up 0.8s var(--ease) both;
+      display: flex; align-items: center;
+    }
+    .wordmark .lens {
+      display: inline-block; width: 0.72em; height: 0.72em; border-radius: 50%; margin: 0 0.02em;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 60%, rgba(255,255,255,0.35) 100%);
+      box-shadow: 0 0 20px rgba(255,255,255,0.5), inset 0 0 8px rgba(255,255,255,0.6);
+      transform: translateY(0.03em);
+    }
+    .tagline { font-family: var(--font-mono); font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 2.5rem; animation: fade-up 0.8s 0.1s var(--ease) both; }
+    #url-input-wrap { width: 100%; max-width: 560px; animation: fade-up 0.8s 0.2s var(--ease) both; }
+    .shortcuts { display: flex; gap: 1.5rem; margin-top: 2rem; animation: fade-up 0.8s 0.3s var(--ease) both; }
+    .shortcut { font-family: var(--font-mono); font-size: 0.6rem; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: color var(--fast) var(--ease); }
+    .shortcut:hover { color: var(--ink); }
+    #status { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.6rem; color: var(--ink-faint); letter-spacing: 0.1em; min-height: 1em; animation: fade-up 0.8s 0.35s var(--ease) both; }
+  </style>
+</head>
+<body>
+
+<span class="corner tl"><span class="lens"></span> S0LACE2</span>
+<span class="corner br">v1.1.0</span>
+
+<div class="page-shell">
+  <h1 class="wordmark">S<span class="lens"></span>LACE2</h1>
+  <p class="tagline">Beta</p>
+  <div id="url-input-wrap" class="search-wrap glass">
+    <input id="url-input" type="text" placeholder="enter a url or search query..." autocomplete="off" spellcheck="false" />
+    <button id="go-btn">Go</button>
+  </div>
+</div>
+
+<!-- floating nav -->
+<nav class="nav">
+  <a class="nav-btn active" href="/" title="Home">
+    <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+    <span class="nav-label">Home</span>
+  </a>
+  <a class="nav-btn" href="/g" title="Games">
+    <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1" fill="currentColor"/><circle cx="17" cy="13" r="1" fill="currentColor"/></svg>
+    <span class="nav-label">Games</span>
+  </a>
+  <a class="nav-btn" href="/m" title="Media">
+    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+    <span class="nav-label">Media</span>
+  </a>
+  <a class="nav-btn" href="/s" title="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    <span class="nav-label">Settings</span>
+  </a>
+</nav>
+
+<script src="/uv/uv.bundle.js"></script>
+<script src="/uv/uv.config.js"></script>
+<script src="/global.js"></script>
+<script>
+  const UV_PREFIX = "/uv/service/";
+  const SW_PATH = "/uv/sw.js";
+  const SW_SCOPE = "/uv/service/";
+
+  function navigate(url) {
+    if (!url) return;
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      url = url.includes(".") && !url.includes(" ") ? "https://" + url : (window.S0LACE2_SEARCH || "https://duckduckgo.com/?q=") + encodeURIComponent(url);
+    }
+    const prefix = typeof __uv$config !== "undefined" ? __uv$config.prefix : UV_PREFIX;
+    const encode = typeof __uv$config !== "undefined" ? __uv$config.encodeUrl : encodeURIComponent;
+    location.href = prefix + encode(url);
+  }
+  function setInput(url) { document.getElementById("url-input").value = url; document.getElementById("url-input").focus(); }
+  document.getElementById("go-btn").addEventListener("click", () => navigate(document.getElementById("url-input").value.trim()));
+  document.getElementById("url-input").addEventListener("keydown", (e) => { if (e.key === "Enter") navigate(document.getElementById("url-input").value.trim()); });
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register(SW_PATH, { scope: SW_SCOPE })
+      .then(() => {  })
+      .catch((e) => {  });
+  }
+</script>
+
+<div id="s0lace2-bg"></div>
+<script src="/assets/js/background.js"></script>
+</body>
+</html>
