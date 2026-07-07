@@ -112,9 +112,10 @@
       </div>
       <div class="row-control">
         <select class="ctrl-select" id="bg-style">
-          <option value="ambient">Ambient (full)</option>
-          <option value="ambient_slow">Ambient (lightweight)</option>
-          <option value="minimal">Minimal (solid)</option>
+          <option value="aurora">Aurora (vivid)</option>
+          <option value="dusk">Dusk (soft glow)</option>
+          <option value="mono">Mono (calm)</option>
+          <option value="off">Off (flat)</option>
         </select>
       </div>
     </div>
@@ -275,7 +276,7 @@
     document.getElementById("panic-key-display").textContent = load("s0lace2_panic_key", "") || "—";
     document.getElementById("panic-custom-url").value = load("s0lace2_panic_custom_url", "");
     document.getElementById("anti-close").checked     = load("s0lace2_anti_close", false);
-    document.getElementById("bg-style").value         = load("s0lace2_background", "ambient");
+    document.getElementById("bg-style").value         = load("s0lace2_background", "aurora");
     document.getElementById("always-blank").checked   = load("s0lace2_always_blank", false);
     toggleCustomPanicRow();
     checkSW();
