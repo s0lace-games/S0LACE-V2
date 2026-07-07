@@ -103,7 +103,7 @@
   window.S0LACE2_SEARCH         = load("s0lace2_search", "https://duckduckgo.com/?q=");
   // Central API — always points to the main instance regardless of where the fork is hosted.
   // NOTE: this URL is intentionally left pointing at the original deployment and is not part of the rebrand.
-  window.S0LACE2_CENTRAL_API = "hhttps://s0lace-v2.vercel.app/api/community-games";
+  window.S0LACE2_CENTRAL_API = "https://s0lace-v2.vercel.app/api/community-games";
   window.S0LACE2_GAMES_OVERRIDE = load("s0lace2_games_override", null);
 
 })();
