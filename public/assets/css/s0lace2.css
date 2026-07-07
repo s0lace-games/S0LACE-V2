@@ -81,34 +81,57 @@ a { color: inherit; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
 }
 .bg-blob {
-  position: absolute; border-radius: 50%; filter: blur(40px);
-  mix-blend-mode: screen; /* overlaps brighten into vivid pools instead of muddying into gray */
+  position: absolute; border-radius: 50%;
+  /* No filter:blur() on purpose — blurring a huge element forces the browser to
+     rasterize it at reduced resolution first, which is what made this look "480p".
+     Softness instead comes from the gradient's own stops, which render crisp at any size. */
 }
 #s0lace2-bg .bg-vignette {
   position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0,0,0,0.6) 100%);
+  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(0,0,0,0.45) 100%);
 }
 
-/* AURORA — teal + violet + magenta, saturated, most movement (northern-lights feel) */
+/* AURORA — two big teal + violet blobs, calm drift */
 #s0lace2-bg.bg-aurora { background: linear-gradient(165deg, #090c10 0%, #0a0b11 50%, #0a0a0b 100%); }
-#s0lace2-bg.bg-aurora .bg-blob:nth-child(1) { width: 34vw; height: 34vw; top: -6%; left: -6%; background: radial-gradient(circle, rgba(60,235,215,0.55), transparent 58%); animation: drift-a 20s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-aurora .bg-blob:nth-child(2) { width: 30vw; height: 30vw; bottom: -8%; right: -6%; background: radial-gradient(circle, rgba(180,100,255,0.5), transparent 58%); animation: drift-b 26s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-aurora .bg-blob:nth-child(3) { width: 26vw; height: 26vw; top: 28%; left: 52%; background: radial-gradient(circle, rgba(255,70,175,0.4), transparent 60%); animation: drift-c 24s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-aurora .bg-blob:nth-child(4) { width: 22vw; height: 22vw; bottom: 14%; left: 20%; background: radial-gradient(circle, rgba(100,170,255,0.32), transparent 60%); animation: drift-a 32s ease-in-out infinite alternate-reverse; }
+#s0lace2-bg.bg-aurora .bg-blob:nth-child(1) {
+  width: 65vw; height: 65vw; top: -20%; left: -15%;
+  background: radial-gradient(circle, rgba(70,225,205,0.30) 0%, rgba(70,225,205,0.16) 28%, rgba(70,225,205,0.06) 50%, transparent 72%);
+  animation: drift-a 26s ease-in-out infinite alternate;
+}
+#s0lace2-bg.bg-aurora .bg-blob:nth-child(2) {
+  width: 58vw; height: 58vw; bottom: -22%; right: -14%;
+  background: radial-gradient(circle, rgba(165,100,255,0.28) 0%, rgba(165,100,255,0.15) 28%, rgba(165,100,255,0.05) 50%, transparent 72%);
+  animation: drift-b 32s ease-in-out infinite alternate;
+}
+#s0lace2-bg.bg-aurora .bg-blob:nth-child(3), #s0lace2-bg.bg-aurora .bg-blob:nth-child(4) { display: none; }
 
-/* DUSK — amber + burgundy + deep indigo, slow warm sweep (sunset feel) */
+/* DUSK — two big amber + burgundy blobs, slower drift */
 #s0lace2-bg.bg-dusk { background: linear-gradient(140deg, #0d0908 0%, #0d0a0c 45%, #0a0a0b 100%); }
-#s0lace2-bg.bg-dusk .bg-blob:nth-child(1) { width: 38vw; height: 38vw; top: -8%; left: -8%; background: radial-gradient(circle, rgba(255,150,55,0.48), transparent 58%); animation: drift-a 42s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-dusk .bg-blob:nth-child(2) { width: 32vw; height: 32vw; bottom: -10%; right: -8%; background: radial-gradient(circle, rgba(200,40,110,0.44), transparent 58%); animation: drift-b 50s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-dusk .bg-blob:nth-child(3) { width: 26vw; height: 26vw; top: 30%; right: 20%; background: radial-gradient(circle, rgba(90,70,210,0.3), transparent 60%); animation: drift-c 60s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-dusk .bg-blob:nth-child(4) { display: none; }
+#s0lace2-bg.bg-dusk .bg-blob:nth-child(1) {
+  width: 70vw; height: 70vw; top: -24%; left: -18%;
+  background: radial-gradient(circle, rgba(255,155,60,0.26) 0%, rgba(255,155,60,0.14) 28%, rgba(255,155,60,0.05) 50%, transparent 72%);
+  animation: drift-a 46s ease-in-out infinite alternate;
+}
+#s0lace2-bg.bg-dusk .bg-blob:nth-child(2) {
+  width: 60vw; height: 60vw; bottom: -22%; right: -16%;
+  background: radial-gradient(circle, rgba(195,45,105,0.26) 0%, rgba(195,45,105,0.14) 28%, rgba(195,45,105,0.05) 50%, transparent 72%);
+  animation: drift-b 54s ease-in-out infinite alternate;
+}
+#s0lace2-bg.bg-dusk .bg-blob:nth-child(3), #s0lace2-bg.bg-dusk .bg-blob:nth-child(4) { display: none; }
 
-/* MONO — pure grayscale, brighter whites, calm and quiet */
+/* MONO — two big white blobs, calm and quiet */
 #s0lace2-bg.bg-mono { background: radial-gradient(circle at 30% 20%, #131316 0%, #0a0a0b 60%); }
-#s0lace2-bg.bg-mono .bg-blob:nth-child(1) { width: 32vw; height: 32vw; top: -4%; left: 4%; background: radial-gradient(circle, rgba(255,255,255,0.22), transparent 60%); animation: drift-a 55s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-mono .bg-blob:nth-child(2) { width: 26vw; height: 26vw; bottom: -6%; right: 0%; background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 60%); animation: drift-b 65s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-mono .bg-blob:nth-child(3) { width: 20vw; height: 20vw; top: 42%; left: 58%; background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 62%); animation: drift-c 48s ease-in-out infinite alternate; }
-#s0lace2-bg.bg-mono .bg-blob:nth-child(4) { display: none; }
+#s0lace2-bg.bg-mono .bg-blob:nth-child(1) {
+  width: 58vw; height: 58vw; top: -14%; left: 0%;
+  background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.02) 52%, transparent 72%);
+  animation: drift-a 60s ease-in-out infinite alternate;
+}
+#s0lace2-bg.bg-mono .bg-blob:nth-child(2) {
+  width: 48vw; height: 48vw; bottom: -18%; right: -6%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.015) 52%, transparent 72%);
+  animation: drift-b 70s ease-in-out infinite alternate;
+}
+#s0lace2-bg.bg-mono .bg-blob:nth-child(3), #s0lace2-bg.bg-mono .bg-blob:nth-child(4) { display: none; }
 
 /* OFF — flat solid, zero animation, lightest on low-power devices */
 #s0lace2-bg.bg-off { background: var(--void); }
