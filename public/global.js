@@ -20,7 +20,7 @@
     // Check device memory API if available — under 4GB = low-end
     if (navigator.deviceMemory && navigator.deviceMemory < 4) isLowEnd = true;
     if (isChromebook || isLowEnd) {
-      localStorage.setItem("s0lace2_background", JSON.stringify("minimal"));
+      localStorage.setItem("s0lace2_background", JSON.stringify("off"));
     }
   })();
 
