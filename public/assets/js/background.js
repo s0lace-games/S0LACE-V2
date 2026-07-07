@@ -15,10 +15,13 @@
   el.classList.add('bg-' + pref);
 
   if (pref !== 'off') {
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 4; i++) {
       var blob = document.createElement('div');
       blob.className = 'bg-blob';
       el.appendChild(blob);
     }
+    var vignette = document.createElement('div');
+    vignette.className = 'bg-vignette';
+    el.appendChild(vignette);
   }
 })();
