@@ -1,17 +1,24 @@
-// ── S0LACE2 AMBIENT BACKGROUND ──
-// Lightweight CSS-only replacement for the old Vanta.js clouds background.
-// Reads the same "Background Style" setting from the Settings page.
+// ── S0LACE2 LIQUID BACKGROUND ──
+// Reads the "Background Style" setting and applies one of four presets:
+// aurora (vivid, default) / dusk (diagonal glow) / mono (calm grayscale) / off (flat, no motion)
 (function () {
   var pref;
-  try { pref = JSON.parse(localStorage.getItem('s0lace2_background') || '"ambient"'); }
-  catch (e) { pref = 'ambient'; }
+  try { pref = JSON.parse(localStorage.getItem('s0lace2_background') || '"aurora"'); }
+  catch (e) { pref = 'aurora'; }
+
+  var valid = ['aurora', 'dusk', 'mono', 'off'];
+  if (valid.indexOf(pref) === -1) pref = 'aurora'; // migrate any old preset names safely
 
   var el = document.getElementById('s0lace2-bg');
   if (!el) return;
 
-  if (pref === 'minimal') {
-    el.classList.add('ambient-minimal');
-    return;
+  el.classList.add('bg-' + pref);
+
+  if (pref !== 'off') {
+    for (var i = 0; i < 3; i++) {
+      var blob = document.createElement('div');
+      blob.className = 'bg-blob';
+      el.appendChild(blob);
+    }
   }
-  el.classList.add(pref === 'ambient_slow' ? 'ambient-slow' : 'ambient-full');
 })();
