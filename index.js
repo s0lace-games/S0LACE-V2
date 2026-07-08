@@ -161,7 +161,7 @@ function auth(req, res, next) {
 // ── AI CHAT (Gemini) ──
 // Keeps the API key server-side. Set GEMINI_API_KEY in your environment (see README).
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.0-flash";
 
 app.post("/api/ai/chat", async (req, res) => {
   try {
