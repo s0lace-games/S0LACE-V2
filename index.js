@@ -106,6 +106,7 @@ async function denyGame(id) {
 
 // ── ROUTES ──
 app.get("/g",     (_req, res) => res.sendFile(join(__dirname, "public/games.html")));
+app.get("/ai",    (_req, res) => res.sendFile(join(__dirname, "public/ai.html")));
 app.get("/m",     (_req, res) => res.sendFile(join(__dirname, "public/media.html")));
 app.get("/s",     (_req, res) => res.sendFile(join(__dirname, "public/settings.html")));
 app.get("/admin", (_req, res) => res.sendFile(join(__dirname, "public/admin.html")));
@@ -156,6 +157,50 @@ function auth(req, res, next) {
   if (req.headers["x-admin-password"] !== ADMIN_PASS) return res.status(401).json({ error: "unauthorized" });
   next();
 }
+
+// ── AI CHAT (Gemini) ──
+// Keeps the API key server-side. Set GEMINI_API_KEY in your environment (see README).
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+
+app.post("/api/ai/chat", async (req, res) => {
+  try {
+    if (!GEMINI_API_KEY) {
+      return res.status(500).json({ error: "GEMINI_API_KEY is not set on the server. See README for setup." });
+    }
+    const { message, history } = req.body;
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({ error: "message is required" });
+    }
+
+    // history: [{role: "user"|"model", text: "..."}]  — role names match Gemini's own format
+    const contents = Array.isArray(history)
+      ? history
+          .filter(m => m && typeof m.text === "string" && (m.role === "user" || m.role === "model"))
+          .map(m => ({ role: m.role, parts: [{ text: m.text }] }))
+      : [];
+    contents.push({ role: "user", parts: [{ text: message }] });
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    const geminiRes = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents }),
+    });
+
+    const data = await geminiRes.json();
+    if (!geminiRes.ok) {
+      return res.status(geminiRes.status).json({ error: data?.error?.message || "Gemini API error" });
+    }
+
+    const reply = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "";
+    if (!reply) return res.status(502).json({ error: "Empty response from Gemini" });
+
+    res.json({ reply });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 app.get("/api/admin/pending",        auth, async (_req, res) => { try { res.json(await getPending()); } catch(e) { res.status(500).json({error:e.message}); } });
 app.post("/api/admin/approve/:id",   auth, async (req, res)  => { try { const ok = await approveGame(req.params.id); ok ? res.json({ok:true}) : res.status(404).json({error:"not found"}); } catch(e) { res.status(500).json({error:e.message}); } });
