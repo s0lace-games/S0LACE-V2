@@ -1,117 +1,68 @@
-<!DOCTYPE html>
-<html lang="en-us">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YMKR6TMF13"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-YMKR6TMF13');
-    </script>
 <head>
-    <base href="https://cdn.jsdelivr.net/gh/gn-math/assets@51462750d29b68ac1e33887c1bf13d9c478d5ead/198/">
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | Slope Plus</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+<!-- Adsense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8024356722027062"
+     crossorigin="anonymous"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VKK1BVCT2G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VKK1BVCT2G');
+</script>
     <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="TemplateData/unityloader41.js"></script>
+    <script>
+        var gameInstance = UnityLoader.instantiate("gameContainer", "Build/slope.json", { onProgress: UnityProgress, Module: { onRuntimeInitialized: function() { UnityProgress(gameInstance, "complete") } } });
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2541434264715219"
+     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2541434264715219"
+     crossorigin="anonymous"></script>
     <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
+        .alert {
+          padding: 20px;
+          background-color: #0096FF;
+          color: white;
         }
 
-        #unity-container {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
+        .closebtn {
+          margin-left: 15px;
+          color: white;
+          p {text-align: center;}  
+          font-weight: bold;
+          float: right;
+          font-size: 22px;
+          line-height: 20px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        .closebtn:hover {
+          color: black;
         }
     </style>
-    <script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
-    <script>
-        function mergeFiles(fileParts) {
-            return new Promise((resolve, reject) => {
-                let buffers = [];
-
-                function fetchPart(index) {
-                    if (index >= fileParts.length) {
-                        let mergedBlob = new Blob(buffers);
-                        let mergedFileUrl = URL.createObjectURL(mergedBlob);
-                        resolve(mergedFileUrl);
-                        return;
-                    }
-                    fetch(fileParts[index]).then((response) => response.arrayBuffer()).then((data) => {
-                        buffers.push(data);
-                        fetchPart(index + 1);
-                    }).catch(reject);
-                }
-                fetchPart(0);
-            });
-        }
-
-        function getParts(file, start, end) {
-            let parts = [];
-            for (let i = start; i <= end; i++) {
-                parts.push(file + ".part" + i);
-            }
-            return parts;
-        }
-
-        window.addEventListener('resize', resizeGameContainer);
-
-        function resizeGameContainer() {
-            const container = document.getElementById('gameContainer');
-            if (container) {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                container.style.width = `${width}px`;
-                container.style.height = `${height}px`;
-            }
-        }
-
-        window.onload = function () {
-            resizeGameContainer();
-
-            Promise.all([
-                mergeFiles(getParts("https://cdn.jsdelivr.net/gh/gn-math/assets@51462750d29b68ac1e33887c1bf13d9c478d5ead/198/Build/WEB1.2.1.data.unityweb", 1, 2))
-            ]).then(([dataUrl]) => {
-                let json = {
-                    companyName: "Slope Plus",
-                    productName: "Slope Plus",
-                    dataUrl: dataUrl,
-                    wasmCodeUrl: "https://cdn.jsdelivr.net/gh/gn-math/assets@51462750d29b68ac1e33887c1bf13d9c478d5ead/198/Build/WEB1.2.1.wasm.code.unityweb",
-                    wasmFrameworkUrl: "https://cdn.jsdelivr.net/gh/gn-math/assets@51462750d29b68ac1e33887c1bf13d9c478d5ead/198/Build/WEB1.2.1.wasm.framework.unityweb",
-                    TOTAL_MEMORY: 268435456,
-                    graphicsAPI: ["WebGL 2.0", "WebGL 1.0"],
-                    webglContextAttributes: {
-                        preserveDrawingBuffer: false
-                    },
-                    splashScreenStyle: "Dark",
-                    backgroundColor: "#000000"
-                }
-                let blob = new Blob([JSON.stringify(json)], {
-                    type: 'application/json'
-                });
-                let blobUrl = URL.createObjectURL(blob);
-                UnityLoader.instantiate("gameContainer", json, {
-                    onProgress: UnityProgress,
-                    url: blobUrl
-                });
-            });
-        };
-    </script>
 </head>
 
-<body>
-    <div class="webgl-content">
-        <div id="gameContainer"></div>
-    </div>
-</body>
+<!--- 
+Want to run or host yourself? Check out the source? 
+https://github.com/cgolden15/Slope-Game/ 
 
-</html>
+Drop a star on the repo if you enjoy.
+--->
+
+<body style="margin: 0; overflow: hidden;">
+    <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        Want to play tetris? <a href="https://goldenn.dev/tetris/">Click here!</a> New games coming soon!
+    </div>
+    <div class="webgl-content">
+        <div id="gameContainer" style="width: 100%; height: 100%; margin: 0;"></div>
+    </div>
+    <!-- <a title="GDPR-compliant Web Analytics" href="https://clicky.com/101393847"><img alt="Clicky" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a> -->
+    <script async src="//static.getclicky.com/101393847.js"></script>
+    <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101393847ns.gif" /></p></noscript>
+</body>
+<!-- Slope game by y8 games, not me.-->
