@@ -47,17 +47,44 @@
 
     .chat-input-row { display: flex; gap: 0.6rem; align-items: flex-end; flex-shrink: 0; padding-top: 0.75rem; }
     .chat-input-wrap {
-      flex: 1; display: flex; background: var(--glass-2); border: 1px solid var(--glass-border);
+      flex: 1; display: flex; flex-direction: column; background: var(--glass-2); border: 1px solid var(--glass-border);
       border-radius: var(--r-lg); backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
       box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
       transition: border-color var(--fast) var(--ease);
     }
     .chat-input-wrap:focus-within { border-color: var(--hairline-strong); }
+    .chat-input-inner { display: flex; }
     #chat-input {
       flex: 1; background: transparent; border: none; outline: none; resize: none; color: var(--ink);
       font-family: var(--font-body); font-size: 0.85rem; padding: 0.9rem 1.2rem; max-height: 140px; line-height: 1.5;
     }
     #chat-input::placeholder { color: var(--ink-faint); }
+
+    #attach-btn {
+      flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; align-self: flex-end;
+      background: var(--glass-3); color: var(--ink); border: 1px solid var(--glass-border); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: background var(--fast) var(--ease), transform var(--fast) var(--ease);
+    }
+    #attach-btn:hover { background: var(--glass-3); border-color: var(--hairline-strong); }
+    #attach-btn:active { transform: scale(0.94); }
+    #attach-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    .attach-preview { display: flex; flex-wrap: wrap; gap: 6px; padding: 0.7rem 1rem 0; }
+    .attach-chip {
+      display: flex; align-items: center; gap: 6px; background: var(--glass-3); border: 1px solid var(--glass-border);
+      border-radius: var(--r-pill); padding: 0.3rem 0.5rem 0.3rem 0.6rem; font-family: var(--font-mono); font-size: 0.58rem; color: var(--ink-dim);
+    }
+    .attach-chip svg { width: 11px; height: 11px; stroke: var(--ink-faint); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+    .attach-chip button { background: none; border: none; color: var(--ink-faint); cursor: pointer; font-size: 0.7rem; line-height: 1; padding: 0 2px; }
+    .attach-chip button:hover { color: var(--bad); }
+
+    .msg-attachments { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+    .msg-attachments .attach-chip { background: rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.18); }
+    .msg-row.model .msg-attachments .attach-chip { background: var(--glass-3); border-color: var(--glass-border); }
+
     #send-btn {
       flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; align-self: flex-end;
       background: var(--white); color: var(--void); border: none; cursor: pointer;
@@ -83,7 +110,7 @@
 <div class="page-chat">
   <div class="chat-header">
     <div>
-      <span class="eyebrow">chat · ai</span>
+      <span class="eyebrow">chat · gemini</span>
       <h1 class="page-title" style="font-size: clamp(1.6rem, 3vw, 2.2rem); margin-top: 0.4rem;">AI</h1>
     </div>
     <button class="ctrl-btn" onclick="newChat()">New chat</button>
@@ -96,9 +123,16 @@
     </div>
   </div>
 
+  <div class="attach-preview" id="attach-preview"></div>
   <div class="chat-input-row">
+    <button id="attach-btn" title="Attach files" onclick="document.getElementById('file-input').click()">
+      <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L9.41 17.41a1.5 1.5 0 0 1-2.12-2.12l8.49-8.49"/></svg>
+    </button>
+    <input type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.html,.htm" style="display:none" onchange="onFilesChosen(event)" />
     <div class="chat-input-wrap">
-      <textarea id="chat-input" rows="1" placeholder="Message S0LACE2 AI…" autocomplete="off"></textarea>
+      <div class="chat-input-inner">
+        <textarea id="chat-input" rows="1" placeholder="Message S0LACE2 AI…" autocomplete="off"></textarea>
+      </div>
     </div>
     <button id="send-btn" onclick="sendMessage()">
       <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -111,7 +145,7 @@
   <a class="nav-btn" href="/g"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg><span class="nav-label">Games</span></a>
   <a class="nav-btn active" href="/ai"><svg viewBox="0 0 24 24"><path d="M12 2.5c.3 3.7 1.1 6.3 2.5 7.7 1.4 1.4 4 2.2 7.7 2.5-3.7.3-6.3 1.1-7.7 2.5-1.4 1.4-2.2 4-2.5 7.7-.3-3.7-1.1-6.3-2.5-7.7C8.1 13.8 5.5 13 1.8 12.7c3.7-.3 6.3-1.1 7.7-2.5C10.9 8.8 11.7 6.2 12 2.5Z" fill="currentColor" stroke="none"/></svg><span class="nav-label">AI</span></a>
   <a class="nav-btn" href="/m"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="13" rx="2.4"/><path d="M9.5 8.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" stroke="none"/><path d="M8 20h8"/></svg><span class="nav-label">Media</span></a>
-  <a class="nav-btn" href="/s"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2.05 2.05 0 1 1-2.9 2.9l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56v.17a2.05 2.05 0 1 1-4.1 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2.05 2.05 0 1 1-2.9-2.9l.06-.06a1.7 1.7 0 0 0 .34-1.87A1.7 1.7 0 0 0 2.79 12.5h-.17a2.05 2.05 0 1 1 0-4.1h.09A1.7 1.7 0 0 0 4.27 7.3a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2.05 2.05 0 1 1 2.9-2.9l.06.06a1.7 1.7 0 0 0 1.87.34h.08A1.7 1.7 0 0 0 10.34 1.4v-.17a2.05 2.05 0 1 1 4.1 0v.09a1.7 1.7 0 0 0 1.03 1.56h.08a1.7 1.7 0 0 0 1.87-.34l.06-.06a2.05 2.05 0 1 1 2.9 2.9l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.56 1.03h.17a2.05 2.05 0 1 1 0 4.1h-.09a1.7 1.7 0 0 0-1.56 1.03Z"/></svg><span class="nav-label">Settings</span></a>
+  <a class="nav-btn" href="/s"><svg viewBox="0 0 24 24"><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2.05 2.05 0 1 1-2.9 2.9l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56v.17a2.05 2.05 0 1 1-4.1 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2.05 2.05 0 1 1-2.9-2.9l.06-.06a1.7 1.7 0 0 0 .34-1.87A1.7 1.7 0 0 0 2.79 12.5h-.17a2.05 2.05 0 1 1 0-4.1h.09A1.7 1.7 0 0 0 4.27 7.3a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2.05 2.05 0 1 1 2.9-2.9l.06.06a1.7 1.7 0 0 0 1.87.34h.08A1.7 1.7 0 0 0 10.34 1.4v-.17a2.05 2.05 0 1 1 4.1 0v.09a1.7 1.7 0 0 0 1.03 1.56h.08a1.7 1.7 0 0 0 1.87-.34l.06-.06a2.05 2.05 0 1 1 2.9 2.9l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.56 1.03h.17a2.05 2.05 0 1 1 0 4.1h-.09a1.7 1.7 0 0 0-1.56 1.03Z M15.2 12A3.2 3.2 0 1 0 8.8 12a3.2 3.2 0 0 0 6.4 0Z"/></svg><span class="nav-label">Settings</span></a>
 </nav>
 
 <script>
@@ -122,6 +156,43 @@
   const emptyEl  = document.getElementById('chat-empty');
   const input    = document.getElementById('chat-input');
   const sendBtn  = document.getElementById('send-btn');
+  const previewEl = document.getElementById('attach-preview');
+
+  const MIME_MAP = { pdf: 'application/pdf', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', html: 'text/html', htm: 'text/html' };
+  const MAX_FILE_MB = 15;
+  let pendingFiles = []; // [{name, mimeType, data(base64), sizeKB}]
+
+  const FILE_ICON = '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+
+  function onFilesChosen(e) {
+    const chosen = Array.from(e.target.files || []);
+    chosen.forEach(file => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const mimeType = MIME_MAP[ext];
+      if (!mimeType) { alert(file.name + ': unsupported file type.'); return; }
+      if (file.size > MAX_FILE_MB * 1024 * 1024) { alert(file.name + `: over ${MAX_FILE_MB}MB, please choose a smaller file.`); return; }
+
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const base64 = ev.target.result.split(',')[1];
+        pendingFiles.push({ name: file.name, mimeType, data: base64, sizeKB: Math.round(file.size / 1024) });
+        renderPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = ''; // allow re-choosing the same file later
+  }
+
+  function renderPreview() {
+    previewEl.innerHTML = pendingFiles.map((f, i) => `
+      <span class="attach-chip">${FILE_ICON}${f.name}<button onclick="removeFile(${i})" title="Remove">✕</button></span>
+    `).join('');
+  }
+
+  function removeFile(i) {
+    pendingFiles.splice(i, 1);
+    renderPreview();
+  }
 
   function saveHistory() {
     // Cap stored history so localStorage doesn't grow unbounded
@@ -129,13 +200,21 @@
     localStorage.setItem('s0lace2_ai_history', JSON.stringify(trimmed));
   }
 
-  function renderMessage(role, text, isError) {
+  function renderMessage(role, text, isError, fileNames) {
     if (emptyEl) emptyEl.remove();
     const row = document.createElement('div');
     row.className = 'msg-row ' + role;
     const bubble = document.createElement('div');
     bubble.className = 'msg-bubble' + (isError ? ' error' : '');
-    bubble.textContent = text;
+    if (fileNames && fileNames.length) {
+      const chips = document.createElement('div');
+      chips.className = 'msg-attachments';
+      chips.innerHTML = fileNames.map(n => `<span class="attach-chip">${FILE_ICON}${n}</span>`).join('');
+      bubble.appendChild(chips);
+    }
+    const textNode = document.createElement('div');
+    textNode.textContent = text;
+    bubble.appendChild(textNode);
     row.appendChild(bubble);
     scrollEl.appendChild(row);
     scrollEl.scrollTop = scrollEl.scrollHeight;
@@ -161,14 +240,22 @@
 
   async function sendMessage() {
     const text = input.value.trim();
-    if (!text) return;
+    if (!text && pendingFiles.length === 0) return;
+
+    const filesToSend = pendingFiles.slice();
+    const fileNames = filesToSend.map(f => f.name);
+    pendingFiles = [];
+    renderPreview();
 
     input.value = '';
     input.style.height = 'auto';
     sendBtn.disabled = true;
 
-    renderMessage('user', text);
-    history.push({ role: 'user', text });
+    renderMessage('user', text, false, fileNames);
+    // Only the text (plus a filename note) is kept in persisted history — raw file
+    // bytes aren't stored client-side to avoid blowing localStorage's quota.
+    const historyText = fileNames.length ? `${text}\n[attached: ${fileNames.join(', ')}]` : text;
+    history.push({ role: 'user', text: historyText });
     saveHistory();
 
     renderTyping();
@@ -177,7 +264,11 @@
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, history: history.slice(0, -1) })
+        body: JSON.stringify({
+          message: text || '(see attached file)',
+          history: history.slice(0, -1),
+          files: filesToSend.map(f => ({ mimeType: f.mimeType, data: f.data }))
+        })
       });
       const data = await res.json();
       removeTyping();
@@ -200,6 +291,8 @@
 
   function newChat() {
     history = [];
+    pendingFiles = [];
+    renderPreview();
     localStorage.removeItem('s0lace2_ai_history');
     scrollEl.innerHTML = '';
     scrollEl.appendChild(emptyEl || document.createElement('div'));

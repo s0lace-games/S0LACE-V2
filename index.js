@@ -6,7 +6,7 @@ const { readFileSync, writeFileSync, existsSync } = fs;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-app.use(express.json({ limit: "5mb" }));
+app.use(express.json({ limit: "20mb" }));
 app.use(express.static(join(__dirname, "public")));
 
 const REDIS_URL   = process.env.UPSTASH_REDIS_REST_URL;
@@ -163,14 +163,26 @@ function auth(req, res, next) {
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
+const ALLOWED_MIME = new Set(["application/pdf", "image/png", "image/jpeg", "image/jpg", "text/html", "text/plain"]);
+
 app.post("/api/ai/chat", async (req, res) => {
   try {
     if (!GEMINI_API_KEY) {
       return res.status(500).json({ error: "GEMINI_API_KEY is not set on the server. See README for setup." });
     }
-    const { message, history } = req.body;
+    const { message, history, files } = req.body;
     if (!message || typeof message !== "string") {
       return res.status(400).json({ error: "message is required" });
+    }
+
+    let fileParts = [];
+    if (Array.isArray(files)) {
+      for (const f of files) {
+        if (!f || typeof f.data !== "string" || !ALLOWED_MIME.has(f.mimeType)) {
+          return res.status(400).json({ error: `Unsupported file type: ${f?.mimeType || "unknown"}` });
+        }
+        fileParts.push({ inline_data: { mime_type: f.mimeType, data: f.data } });
+      }
     }
 
     // history: [{role: "user"|"model", text: "..."}]  — role names match Gemini's own format
@@ -179,7 +191,7 @@ app.post("/api/ai/chat", async (req, res) => {
           .filter(m => m && typeof m.text === "string" && (m.role === "user" || m.role === "model"))
           .map(m => ({ role: m.role, parts: [{ text: m.text }] }))
       : [];
-    contents.push({ role: "user", parts: [{ text: message }] });
+    contents.push({ role: "user", parts: [...fileParts, { text: message }] });
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
     const geminiRes = await fetch(url, {
